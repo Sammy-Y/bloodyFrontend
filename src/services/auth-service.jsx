@@ -28,6 +28,10 @@ class AuthService {
     });
   }
 
+  googleLogin() {
+    return axios.get(API_URL + "/auth/google");
+  }
+
   logout() {
     return localStorage.removeItem("user");
   }

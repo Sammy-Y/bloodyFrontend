@@ -1,6 +1,5 @@
 import React, { useContext, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Calendar from "react-multi-date-picker";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 

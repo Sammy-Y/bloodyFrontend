@@ -1,10 +1,16 @@
 import React from "react";
+import AuthService from "../../services/auth-service";
 
 // import img
-import googleImg from "../../static/Img/google.png";
 import lineImg from "../../static/Img/line.png";
+import googleImg from "../../static/Img/google.png";
 
 const OtherLogin = () => {
+  const googleRegister = () => {
+    window.open("http://192.168.1.105:8000/user/auth/google", "_self");
+    // AuthService.googleLogin();
+  };
+
   return (
     <div>
       <div className="text-center my-3">
@@ -12,6 +18,7 @@ const OtherLogin = () => {
       </div>
       <div className="d-flex">
         <button
+          onClick={googleRegister}
           className="d-flex btn btn-outline-secondary mx-3 justify-content-center"
           style={{ width: "12rem" }}
         >

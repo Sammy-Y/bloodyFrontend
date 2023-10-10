@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AuthService from "../../services/auth-service";
 
 const ComfirmComponent = () => {
@@ -7,10 +7,10 @@ const ComfirmComponent = () => {
   const [userName, setUserName] = useState();
   const navigate = useNavigate();
 
-  // const { token } = useParams();
+  const { token } = useParams();
   // verify the user by toekn and get user
   useEffect(() => {
-    AuthService.verifyUser()
+    AuthService.verifyUser(token)
       .then(({ data }) => {
         if (data.token) {
           localStorage.setItem("user", JSON.stringify(data));

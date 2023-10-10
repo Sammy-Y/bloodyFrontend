@@ -11,8 +11,15 @@ const headers = {
 };
 
 class BloodyService {
+  // get all bloody info
+  getBpDetail(userId) {
+    return axios.get(API_URL + "/getAllbp/" + userId, {
+      headers,
+    });
+  }
+
+  // add new bloody record
   addRecord(sys, dia, pul, userId) {
-    console.log(headers);
     return axios.post(
       API_URL + "/newbp",
       {
