@@ -28,6 +28,7 @@ const BloodyDetailComponent = () => {
         setGetDataDone(true);
       })
       .catch((err) => {
+        setGetDataDone(true);
         console.log(err);
       });
   }, []);

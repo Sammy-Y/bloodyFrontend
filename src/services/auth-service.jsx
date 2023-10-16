@@ -31,6 +31,12 @@ class AuthService {
   googleLogin() {
     return axios.get(API_URL + "/auth/google");
   }
+  googleLoginNew(userData) {
+    console.log(userData);
+    return axios.post(API_URL + "/google/login", {
+      userData: userData,
+    });
+  }
 
   logout() {
     return localStorage.removeItem("user");
