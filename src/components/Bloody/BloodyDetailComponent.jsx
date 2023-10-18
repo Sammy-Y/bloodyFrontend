@@ -10,7 +10,7 @@ const BloodyDetailComponent = () => {
 
   const bloodyHeadList = ["日期", "收縮壓", "舒張壓", "心跳"];
 
-  const userId = "xmyangboy@gmail.com";
+  let userId = "";
 
   // get date w/o time
   const getDay = (date) => {
@@ -21,6 +21,8 @@ const BloodyDetailComponent = () => {
   };
 
   useEffect(() => {
+    userId = JSON.parse(localStorage.getItem("user")).user.userId;
+
     BloodyService.getBpDetail(userId)
       .then((result) => {
         const item = result.data.data;

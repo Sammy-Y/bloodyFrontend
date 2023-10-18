@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { gapi } from "gapi-script";
 import AuthService from "../../services/auth-service";
 import { GoogleLogin } from "react-google-login";
 import { UserContext } from "../../store/user-context";
@@ -14,16 +15,16 @@ const OtherLogin = () => {
   const clientId =
     "521506941615-kp0m0f2rq50d3n1krc86sem7cnmq8tf1.apps.googleusercontent.com";
 
-  // useEffect(() => {
-  //   function start() {
-  //     gapi.client.init({
-  //       clientId: clientId,
-  //       scope: "",
-  //     });
-  //   }
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId: clientId,
+        scope: "email",
+      });
+    }
 
-  //   gapi.load("client:auth2", start);
-  // }, []);
+    gapi.load("client:auth2", start);
+  }, []);
   const googleRegister = () => {
     window.open("http://192.168.1.105:8000/user/auth/google", "_self");
     // AuthService.googleLogin();
@@ -48,7 +49,28 @@ const OtherLogin = () => {
         <p style={{ fontSize: "0.75rem", color: "gray" }}>或</p>
       </div>
       <div className="d-flex">
-        <button
+        {/* 20231018，add google login button and styling */}
+        <GoogleLogin
+          render={(renderProps) => (
+            <button
+              onClick={renderProps.onClick}
+              className="d-flex btn btn-outline-secondary mx-3 justify-content-center"
+              style={{ width: "12rem" }}
+            >
+              <div className="mx-1">
+                <img src={googleImg} style={{ width: "20px" }} alt="google" />
+              </div>
+              <div className="mx-1">Google</div>
+            </button>
+          )}
+          clientId={clientId}
+          buttonText="Google"
+          onSuccess={responseGoogle}
+          onFailure={error}
+          cookiePolicy={"single_host_origin"}
+          isSignedIn={false}
+        />
+        {/* <button
           onClick={googleRegister}
           className="d-flex btn btn-outline-secondary mx-3 justify-content-center"
           style={{ width: "12rem" }}
@@ -57,7 +79,7 @@ const OtherLogin = () => {
             <img src={googleImg} style={{ width: "20px" }} alt="google" />
           </div>
           <div className="mx-1">Google</div>
-        </button>
+        </button> */}
         <button
           className="d-flex btn btn-outline-secondary mx-3 justify-content-center"
           style={{ width: "12rem" }}
@@ -67,14 +89,6 @@ const OtherLogin = () => {
           </div>
           <div className="mx-1">Line</div>
         </button>
-        <GoogleLogin
-          clientId={clientId}
-          buttonText="Google"
-          onSuccess={responseGoogle}
-          onFailure={error}
-          cookiePolicy={"single_host_origin"}
-          isSignedIn={false}
-        />
       </div>
     </div>
   );
