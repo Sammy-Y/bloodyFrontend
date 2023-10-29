@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://192.168.1.105:8000/api/bp";
+const API_URL = "http://192.168.1.108:8000/api/bp";
 
 // const API_URL = "http://172.20.10.11/api/bp";
 
@@ -19,7 +19,7 @@ class BloodyService {
   }
 
   // add new bloody record
-  addRecord(sys, dia, pul, userId) {
+  addRecord(sys, dia, pul, userId, addDate) {
     return axios.post(
       API_URL + "/newbp",
       {
@@ -27,6 +27,7 @@ class BloodyService {
         diastolicPressure: dia,
         heartRate: pul,
         userId: userId,
+        addDate: addDate,
       },
       {
         headers,

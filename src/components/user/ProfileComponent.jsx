@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import AuthService from "../../services/auth-service";
+import axios from "axios";
 
 const ProfileComponent = () => {
-  // const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
   const [userConfirm, setUserConfirm] = useState(null);
+  const [lineChecked, setLineChecked] = useState(false);
 
-  // console.log(typeof user);
+  const lineHandler = async (e) => {
+    window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://localhost:8000/user/api/linenotify&state=${userId}`;
+    // "https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://localhost:3000&state=abcd";
+    // "https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://localhost:8000/user/api/linenotify&state=abcd";
 
-  // AuthService.getCurrentUser().then((data) => {
-  //   setUser(data.data.user);
-  // });
-
-  // useEffect(() => {
-  //   AuthService.getUser().then(({ data }) => {
-  //     console.log(data.user);
-  //     setUser(data.user);
-
-  //     console.log(user);
-  //   });
-  // }, []);
+    setLineChecked(!lineChecked);
+  };
 
   useEffect(() => {
     const { user } = AuthService.getCurrentUser();
@@ -100,17 +96,20 @@ const ProfileComponent = () => {
           />
         </div>
 
-        {/* <div className="form-check form-switch">
-          <label htmlFor="mySwitch">Line Notify</label>
-          <input
-            className="form-check-input"
-            onChange={lineHandler}
-            type="checkbox"
-            id="mySwitch"
-            name="darkmode"
-            checked={line}
-          />
-        </div> */}
+        <div className="row">
+          <div className="col-4">訊息通知</div>
+          <div className="col form-check form-switch">
+            <label htmlFor="mySwitch">連接Line Notify</label>
+            <input
+              className="form-check-input"
+              onChange={lineHandler}
+              type="checkbox"
+              id="mySwitch"
+              name="darkmode"
+              value={lineChecked}
+            />
+          </div>
+        </div>
         <div className="text-center mt-4">
           <button type="submit" className="mx-3 btn btn-outline-primary">
             返回

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import BloodyService from "../../services/bloody-service";
 import Spinner from "../UI/Spinner";
 import "./scss/BloodyDetailComponent.css";
-import clipboardplus from "../../static/Img/clipboardplus.svg";
+import NewBloodyComponent from "./NewBloodyComponent";
 
 const BloodyDetailComponent = () => {
   const [bloodyDetailList, setBloodyDetailList] = useState([]);
@@ -21,7 +21,9 @@ const BloodyDetailComponent = () => {
   };
 
   useEffect(() => {
-    userId = JSON.parse(localStorage.getItem("user")).user.userId;
+    if (localStorage.getItem("user")) {
+      userId = JSON.parse(localStorage.getItem("user")).user.userId;
+    }
 
     BloodyService.getBpDetail(userId)
       .then((result) => {
@@ -47,7 +49,12 @@ const BloodyDetailComponent = () => {
             <div className="col col-lg-10 d-flex my-3">
               <h3>血壓歷史紀錄</h3>
               <div>
-                <button type="button" className="btn btn-primary mx-4">
+                <button
+                  type="button"
+                  className="btn btn-primary mx-4"
+                  data-bs-toggle="modal"
+                  data-bs-target="#newBloodyBackdrop"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -61,9 +68,10 @@ const BloodyDetailComponent = () => {
                       d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
                     />
                   </svg>
-                  新增血壓紀錄
+                  新增紀錄
                 </button>
               </div>
+              <NewBloodyComponent id="newBloodyBackdrop" />
             </div>
             <div className="col col-lg-10">
               <table className="table table-hover table-bordered table-responsive blood-detail">

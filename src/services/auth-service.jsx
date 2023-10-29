@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://192.168.1.105:8000/user";
+const API_URL = "http://192.168.1.108:8000/user";
 
 // const API_URL = "http://172.20.10.9:8000/user";
 
@@ -36,6 +36,10 @@ class AuthService {
     return axios.post(API_URL + "/google/login", {
       userData: userData,
     });
+  }
+
+  lineNotify() {
+    return axios.post(API_URL + "/api/linenotify");
   }
 
   logout() {
