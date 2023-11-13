@@ -54,18 +54,18 @@ class AuthService {
     return JSON.parse(localStorage.getItem("user"));
   }
 
-  getUser() {
-    return axios.get(API_URL + "/getUser/" + token);
+  getUser(userId) {
+    return axios.get(API_URL + "/userProfile/" + userId);
   }
 
   sendVerifyMail(userId) {
     return axios.post(API_URL + "/sendVerify", { userId: userId });
   }
 
-  updateUser(userId, userName) {
+  updateUser(user, state) {
     return axios.post(API_URL + "/update", {
-      userId: userId,
-      userName: userName,
+      user: user,
+      state: state,
     });
   }
 }

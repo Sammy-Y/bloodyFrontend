@@ -1,11 +1,8 @@
-import React, { useContext, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 
-import { UserContext } from "../../store/user-context";
 import BloodyService from "../../services/bloody-service";
-import ToLogin from "../UI/ToLogin";
 import DatePicker from "react-multi-date-picker";
 
 const NewBloodyComponent = ({ id }) => {
@@ -66,7 +63,7 @@ const NewBloodyComponent = ({ id }) => {
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="staticBackdropLabel">

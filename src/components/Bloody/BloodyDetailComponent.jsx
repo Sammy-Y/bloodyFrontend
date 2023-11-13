@@ -71,6 +71,7 @@ const BloodyDetailComponent = () => {
                   新增紀錄
                 </button>
               </div>
+              {/* open New bloody modal */}
               <NewBloodyComponent id="newBloodyBackdrop" />
             </div>
             <div className="col col-lg-10">
