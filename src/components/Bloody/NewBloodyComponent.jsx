@@ -5,6 +5,9 @@ import "react-multi-date-picker/styles/layouts/mobile.css";
 import BloodyService from "../../services/bloody-service";
 import DatePicker from "react-multi-date-picker";
 
+// import img
+import camera from "../../static/Img/camera.png";
+
 const NewBloodyComponent = ({ id }) => {
   // get current user data from local storage
   const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -59,6 +62,7 @@ const NewBloodyComponent = ({ id }) => {
       id={id}
       className="modal fade"
       data-bs-keyboard="false"
+      data-bs-backdrop="static"
       tabIndex="-1"
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
@@ -139,6 +143,22 @@ const NewBloodyComponent = ({ id }) => {
             </div>
           </div>
           <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-primary"
+              data-bs-target="#takePicture"
+              data-bs-toggle="modal"
+              data-bs-dismiss="modal"
+              style={{ height: "38px" }}
+            >
+              <img
+                src={camera}
+                style={{ width: "25px" }}
+                className="mx-1"
+                alt="camera"
+              />
+              拍照
+            </button>
             <button
               type="button"
               className="btn btn-secondary"

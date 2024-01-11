@@ -3,6 +3,7 @@ import BloodyService from "../../services/bloody-service";
 import Spinner from "../UI/Spinner";
 import "./scss/BloodyDetailComponent.css";
 import NewBloodyComponent from "./NewBloodyComponent";
+import WebCam from "./ＷebCam";
 
 const BloodyDetailComponent = () => {
   const [bloodyDetailList, setBloodyDetailList] = useState([]);
@@ -73,6 +74,7 @@ const BloodyDetailComponent = () => {
               </div>
               {/* open New bloody modal */}
               <NewBloodyComponent id="newBloodyBackdrop" />
+              <WebCam id="takePicture" />
             </div>
             <div className="col col-lg-10">
               <table className="table table-hover table-bordered table-responsive blood-detail">

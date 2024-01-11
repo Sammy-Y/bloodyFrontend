@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://192.168.1.108:8000/user";
+const API_URL = "http://192.168.1.106:8000/user";
 
 // const API_URL = "http://172.20.10.9:8000/user";
 

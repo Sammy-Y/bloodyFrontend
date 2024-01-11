@@ -2,6 +2,7 @@ import React from "react";
 import AuthService from "../../services/auth-service";
 
 const ConfirmComponent = ({ id }) => {
+  // cancel Line notify button
   const cancelLineHandler = async () => {
     const user = JSON.parse(localStorage.getItem("user")).user;
     AuthService.updateUser(user, "lineNotify").then(({ data }) => {

@@ -11,7 +11,7 @@ const HomeComponent = () => {
   const { currentUser } = useContext(UserContext);
 
   const toLoginHandler = () => {
-    currentUser ? navigate("/newrecord") : navigate("/login");
+    currentUser ? navigate("/bloody-detail") : navigate("/login");
   };
 
   return (
