@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 const videoConstraints = {
@@ -9,20 +9,43 @@ const videoConstraints = {
 
 const WebCam = ({ id }) => {
   const webcamRef = useRef(null);
-  const [imgSrc, setImgSrc] = useState(null);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [imgSrc, setImgSrc] = useState(null); // byte64
   console.log(id);
+
   const capture = useCallback(() => {
-    console.log(webcamRef);
-    console.log(imgSrc);
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
+    console.log(imageSrc);
   }, [webcamRef, setImgSrc]);
 
   const cancel = () => {
     let stream = webcamRef.current.stream;
     const tracks = stream.getTracks();
     tracks.forEach((track) => track.stop());
-    setImgSrc(null);
+    // setImgSrc(null);
+  };
+
+  const startVideo = () => {
+    setPlayVideo(true);
+    navigator.getUserMedia(
+      {
+        video: true,
+      },
+      (stream) => {
+        let video = document.getElementsByClassName("app__videoFeed")[0];
+        if (video) {
+          video.srcObject = stream;
+        }
+      },
+      (err) => console.error(err)
+    );
+  };
+
+  const stopVideo = () => {
+    setPlayVideo(false);
+    let video = document.getElementsByClassName("app__videoFeed")[0];
+    video.srcObject.getTracks()[0].stop();
   };
 
   return (
@@ -49,15 +72,21 @@ const WebCam = ({ id }) => {
             ></button>
           </div>
           <div className="modal-body d-flex justify-content-center">
-            {/* {imgSrc && <img src={imgSrc} alt="img" />}
-            <Webcam
-              audio={false}
-              ref={webcamRef}
-              screenshotFormat="image/jpeg"
-              videoConstraints={videoConstraints}
-              // minScreenshotWidth={180}
-              // minScreenshotHeight={180}
-            /> */}
+            {imgSrc === null ? (
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                videoConstraints={videoConstraints}
+                // minScreenshotWidth={180}
+                // minScreenshotHeight={180}
+              />
+            ) : (
+              <>
+                <img src={imgSrc} alt="img" />
+                <button onClick={() => setImgSrc(null)}>Retake</button>
+              </>
+            )}
           </div>
           <div className="modal-footer">
             <button
@@ -65,6 +94,7 @@ const WebCam = ({ id }) => {
               data-bs-target="#newBloodyBackdrop"
               data-bs-toggle="modal"
               data-bs-dismiss="modal"
+              // onClick={stopVideo}
             >
               back Photo
             </button>

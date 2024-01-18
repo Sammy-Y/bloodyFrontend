@@ -1,7 +1,7 @@
 import axios from "axios";
-const API_URL = "http://192.168.1.106:8000/api/bp";
+// const API_URL = "https://192.168.1.106:8000/api/bp";
 
-// const API_URL = "http://172.20.10.11/api/bp";
+const API_URL = "http://localhost/api/bp";
 
 const token = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user")).token
@@ -13,6 +13,7 @@ const headers = {
 class BloodyService {
   // get all bloody info
   getBpDetail(userId) {
+    console.log(userId);
     return axios.get(API_URL + "/getAllbp/" + userId, {
       headers,
     });

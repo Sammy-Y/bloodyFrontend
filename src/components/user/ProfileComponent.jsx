@@ -30,7 +30,7 @@ const ProfileComponent = () => {
     // window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://localhost:8000/user/api/linenotify&state=${userId}`;
     if (lineChecked) {
     } else {
-      window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://192.168.1.108:8000/user/api/linenotify&state=${userId}`;
+      window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://192.168.1.106:8000/user/api/linenotify&state=${userId}`;
     }
 
     // setLineChecked(!lineChecked);

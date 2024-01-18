@@ -1,7 +1,7 @@
 import axios from "axios";
-const API_URL = "http://192.168.1.106:8000/user";
+const API_URL = "https://192.168.1.106/user";
 
-// const API_URL = "http://172.20.10.9:8000/user";
+// const API_URL = "http://localhost/user";
 
 const token = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user")).token
@@ -39,6 +39,7 @@ class AuthService {
   }
 
   lineNotify() {
+    axios.post(API_URL + "/api/linenotify");
     return axios.post(API_URL + "/api/linenotify");
   }
 
@@ -55,6 +56,7 @@ class AuthService {
   }
 
   getUser(userId) {
+    console.log(API_URL + "/userProfile/" + userId);
     return axios.get(API_URL + "/userProfile/" + userId);
   }
 
