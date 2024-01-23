@@ -4,6 +4,7 @@ import "react-multi-date-picker/styles/layouts/mobile.css";
 
 import BloodyService from "../../services/bloody-service";
 import DatePicker from "react-multi-date-picker";
+import moment from "moment";
 
 // import img
 import camera from "../../static/Img/camera.png";
@@ -14,6 +15,7 @@ const NewBloodyComponent = ({ id }) => {
   const sysInputRef = useRef(0);
   const diaInputRef = useRef(0);
   const pulInputRef = useRef(0);
+  const remarkRef = useRef("");
   const [errMessage, setErrMessage] = useState("");
   const [testDate, setTestDate] = useState(new Date());
   const months = [
@@ -36,17 +38,16 @@ const NewBloodyComponent = ({ id }) => {
     const enteredSys = parseInt(sysInputRef.current.value);
     const enteredDia = parseInt(diaInputRef.current.value);
     const enteredPul = parseInt(pulInputRef.current.value);
-    console.log(setTestDate);
-    const addDate = new Date(testDate);
-    console.log(addDate);
-    console.log(addDate.toLocaleDateString());
-    console.log(typeof addDate.toLocaleDateString());
+    const remark = remarkRef.current.value;
+    const addDate = moment(new Date(testDate)).format("YYYY/MM/DD/HH:mm:ss");
+    console.log(moment(addDate).format("YYYY/MM/DD/HH:mm:ss"));
     BloodyService.addRecord(
       enteredSys,
       enteredDia,
       enteredPul,
       currentUser.user.userId,
-      addDate
+      addDate,
+      remark
     )
       .then(() => {
         window.alert("新增成功！");
@@ -139,6 +140,19 @@ const NewBloodyComponent = ({ id }) => {
                 name="PUL"
                 placeholder="請輸入心跳"
                 ref={pulInputRef}
+              />
+            </div>
+            <div className="form-group my-2">
+              <label htmlFor="userPw" className="mb-1">
+                備註(Remark)):
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="remark"
+                name="remark"
+                placeholder="請輸入"
+                ref={remarkRef}
               />
             </div>
           </div>

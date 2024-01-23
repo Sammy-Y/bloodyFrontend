@@ -13,17 +13,21 @@ const ProfileComponent = () => {
 
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem("user")).user;
-    AuthService.getUser(user.userId).then((response) => {
-      if (response.data.token) {
-        console.log(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        user = JSON.parse(localStorage.getItem("user")).user;
-        setUserId(user.userId);
-        setUserName(user.userName);
-        setUserConfirm(user.confirmed);
-        setLineChecked(user.lineNotify);
-      }
-    });
+    AuthService.getUser(user.userId)
+      .then((response) => {
+        if (response.data.token) {
+          console.log(response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
+          user = JSON.parse(localStorage.getItem("user")).user;
+          setUserId(user.userId);
+          setUserName(user.userName);
+          setUserConfirm(user.confirmed);
+          setLineChecked(user.lineNotify);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const lineHandler = async (e) => {

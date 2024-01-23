@@ -1,7 +1,9 @@
 import axios from "axios";
-const API_URL = "https://192.168.1.106/user";
+const API_URL = "//192.168.1.106:8000/user";
+// const API_URL = "https://192.168.1.106:8000/user";
+// const API_URL = "http://192.168.1.106:8000/user";
 
-// const API_URL = "http://localhost/user";
+// const API_URL = "//localhost/user";
 
 const token = localStorage.getItem("user")
   ? JSON.parse(localStorage.getItem("user")).token

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import BloodyService from "../../services/bloody-service";
 
 const videoConstraints = {
-  width: 120,
-  height: 120,
+  width: 300,
+  height: 300,
   facingMode: "environment",
 };
 
@@ -43,9 +44,15 @@ const WebCam = ({ id }) => {
   };
 
   const stopVideo = () => {
-    setPlayVideo(false);
-    let video = document.getElementsByClassName("app__videoFeed")[0];
-    video.srcObject.getTracks()[0].stop();
+    const params = {
+      img: imgSrc,
+    };
+    BloodyService.recognize_image(params).then((res) => {
+      console.log(res);
+    });
+    // setPlayVideo(false);
+    // let video = document.getElementsByClassName("app__videoFeed")[0];
+    // video.srcObject.getTracks()[0].stop();
   };
 
   return (
@@ -58,7 +65,7 @@ const WebCam = ({ id }) => {
       aria-labelledby="staticBackdropLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-dialog-centered">
+      <div className="modal-dialog modal-dialog-centered modal-lg">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="staticBackdropLabel">
@@ -94,7 +101,7 @@ const WebCam = ({ id }) => {
               data-bs-target="#newBloodyBackdrop"
               data-bs-toggle="modal"
               data-bs-dismiss="modal"
-              // onClick={stopVideo}
+              onClick={stopVideo}
             >
               back Photo
             </button>
