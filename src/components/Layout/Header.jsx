@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import AuthService from "../../services/auth-service";
 import { UserContext } from "../../store/user-context";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
 
 // import img
 import bloodPressure from "../../static/Img/bloodPressure.png";
@@ -37,20 +39,14 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-sm bg-light navbar-light">
-      <div className="container-fluid">
-        <NavLink className="navbar-brand" to="/">
+    <Navbar expand="lg" className="bg-body-tertiary">
+      {/* <nav className="navbar navbar-expand-sm bg-light navbar-light"> */}
+      <Container>
+        <Navbar.Brand href="/">
           <img src={bloodPressure} alt="bloodpressure" />
-        </NavLink>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mynavbar"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="mynavbar">
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
           <ul className="navbar-nav me-auto">{navList}</ul>
           <ul className="nav navbar-nav navbar-right">
             {!currentUser ? (
@@ -72,9 +68,9 @@ const Header = () => {
               </React.Fragment>
             )}
           </ul>
-        </div>
-      </div>
-    </nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
