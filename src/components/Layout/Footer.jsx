@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="container my-5 py-5 bg-light ">
+    <div className="container my-5 py-5 bg-light">
       <div className="row">
         <div className="col-md-6">
           <p>電　　話： (04)23924505#8701,#8702,#8703,#8706</p>

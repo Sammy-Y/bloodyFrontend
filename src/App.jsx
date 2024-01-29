@@ -16,6 +16,7 @@ import Footer from "./components/Layout/Footer";
 import { UserProvider } from "./store/UserProvider";
 import ComfirmComponent from "./components/user/ComfirmComponent";
 import BloodyDetailComponent from "./components/Bloody/BloodyDetailComponent";
+import DashboardComponent from "./components/Bloody/DashboardComponent";
 
 function App() {
   return (
@@ -42,9 +43,10 @@ function App() {
               exact
             />
             <Route path="/bloody-detail" element={<BloodyDetailComponent />} />
+            <Route path="/dashboard" element={<DashboardComponent />} />
           </Routes>
         </main>
-        <footer className="pb-5 border-top border-dark">
+        <footer className="pb-5 border-top border-dark  mt-5">
           <Footer />
         </footer>
       </React.Fragment>
