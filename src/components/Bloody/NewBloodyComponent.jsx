@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 
@@ -9,15 +9,20 @@ import moment from "moment";
 // import img
 import camera from "../../static/Img/camera.png";
 
-const NewBloodyComponent = ({ id }) => {
+const NewBloodyComponent = ({ id, date }) => {
   // get current user data from local storage
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const [sys, setSys] = useState("");
+  const [dia, setDia] = useState("");
+  const [pul, setPul] = useState("");
+  const [remark, setRemark] = useState("");
+  const [state, setState] = useState("add");
   const sysInputRef = useRef(0);
   const diaInputRef = useRef(0);
   const pulInputRef = useRef(0);
   const remarkRef = useRef("");
   const [errMessage, setErrMessage] = useState("");
-  const [testDate, setTestDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const months = [
     "一月",
     "二月",
@@ -35,22 +40,29 @@ const NewBloodyComponent = ({ id }) => {
   const weekDays = ["日", "一", "二", "三", "四", "五", "六"];
 
   const newRecordHandler = () => {
-    const enteredSys = parseInt(sysInputRef.current.value);
-    const enteredDia = parseInt(diaInputRef.current.value);
-    const enteredPul = parseInt(pulInputRef.current.value);
-    const remark = remarkRef.current.value;
-    const addDate = moment(new Date(testDate)).format("YYYY/MM/DD/HH:mm:ss");
+    // const enteredSys = parseInt(sysInputRef.current.value);
+    // const enteredDia = parseInt(diaInputRef.current.value);
+    // const enteredPul = parseInt(pulInputRef.current.value);
+    // const remark = remarkRef.current.value;
+    const addDate = moment(new Date(selectedDate)).format(
+      "YYYY/MM/DD/HH:mm:ss"
+    );
     console.log(moment(addDate).format("YYYY/MM/DD/HH:mm:ss"));
     BloodyService.addRecord(
-      enteredSys,
-      enteredDia,
-      enteredPul,
+      sys,
+      dia,
+      pul,
       currentUser.user.userId,
       addDate,
-      remark
+      remark,
+      state
     )
       .then(() => {
-        window.alert("新增成功！");
+        if (state === "add") {
+          window.alert("新增成功！");
+        } else if (state === "edit") {
+          window.alert("編輯成功！");
+        }
         window.location.reload();
       })
       .catch((err) => {
@@ -58,6 +70,81 @@ const NewBloodyComponent = ({ id }) => {
         setErrMessage(err.response.data);
       });
   };
+
+  const handleInputChange = (event, ref) => {
+    const inputValue = event.target.value;
+    console.log(inputValue);
+    switch (ref) {
+      case "sys":
+        setSys(inputValue);
+        break;
+      case "dia":
+        setDia(inputValue);
+        break;
+      case "pul":
+        setPul(inputValue);
+        break;
+      case "remark":
+        setRemark(inputValue);
+        break;
+    }
+  };
+
+  // 上傳附件處理
+  const handleUploadImageChange = (event) => {
+    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    // 檢查文件類型是否是圖片
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      alert("請上傳圖片文件（JPEG、PNG、GIF）");
+      // 清空文件選擇
+      event.target.value = null;
+      return;
+    } else {
+      // 是圖片，將檔案轉成base64格式
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        console.log(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 關閉modal後將所有資料清空
+  const closeModal = () => {
+    setSys("");
+    setDia("");
+    setPul("");
+    setRemark("");
+    setState("add");
+    setErrMessage("");
+  };
+
+  // 每當date傳進來時，就依照userId及date獲取資料
+  useEffect(() => {
+    // 在這裡處理 date 的變化
+    console.log("Selected Date:", date);
+    setSelectedDate(date);
+    date = moment(new Date(date)).format("YYYY/MM/DD");
+    const params = {
+      userId: currentUser.user.userId,
+      date: date,
+    };
+    console.log(params);
+    BloodyService.getBP(params).then((res) => {
+      if (res.data.bloodPressure.length > 0) {
+        // 回傳有血壓紀錄資料
+        console.log(res.data.bloodPressure);
+        setSys(res.data.bloodPressure[0].systolicPressure);
+        setDia(res.data.bloodPressure[0].diastolicPressure);
+        setPul(res.data.bloodPressure[0].heartRate);
+        setRemark(res.data.bloodPressure[0].remark);
+        setState("edit");
+      }
+    });
+  }, [date]);
+
   return (
     <div
       id={id}
@@ -79,6 +166,7 @@ const NewBloodyComponent = ({ id }) => {
               className="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
+              onClick={closeModal}
             ></button>
           </div>
           <div className="modal-body">
@@ -99,8 +187,8 @@ const NewBloodyComponent = ({ id }) => {
                 // render={<InputIcon />}
                 months={months}
                 weekDays={weekDays}
-                value={testDate}
-                onChange={(date) => setTestDate(date)}
+                value={selectedDate}
+                disabled="true"
               />
             </div>
             <div className="form-group my-2">
@@ -112,8 +200,9 @@ const NewBloodyComponent = ({ id }) => {
                 className="form-control"
                 id="SYS"
                 name="SYS"
+                value={sys}
                 placeholder="請輸入收縮壓"
-                ref={sysInputRef}
+                onChange={(event) => handleInputChange(event, "sys")}
               />
             </div>
             <div className="form-group my-2">
@@ -125,8 +214,9 @@ const NewBloodyComponent = ({ id }) => {
                 className="form-control"
                 id="DIA"
                 name="DIA"
+                value={dia}
                 placeholder="請輸入舒張壓"
-                ref={diaInputRef}
+                onChange={(event) => handleInputChange(event, "dia")}
               />
             </div>
             <div className="form-group my-2">
@@ -139,20 +229,32 @@ const NewBloodyComponent = ({ id }) => {
                 id="PUL"
                 name="PUL"
                 placeholder="請輸入心跳"
-                ref={pulInputRef}
+                value={pul}
+                onChange={(event) => handleInputChange(event, "pul")}
               />
             </div>
             <div className="form-group my-2">
-              <label htmlFor="userPw" className="mb-1">
-                備註(Remark)):
+              <label htmlFor="formFile" className="form-label">
+                附件(Image):
               </label>
               <input
-                type="text"
+                className="form-control"
+                type="file"
+                id="formFile"
+                onChange={handleUploadImageChange}
+              />
+            </div>
+            <div className="form-group my-2">
+              <label htmlFor="remark" className="mb-1">
+                備註(Remark):
+              </label>
+              <textarea
                 className="form-control"
                 id="remark"
                 name="remark"
                 placeholder="請輸入"
-                ref={remarkRef}
+                value={remark}
+                onChange={(event) => handleInputChange(event, "remark")}
               />
             </div>
           </div>
@@ -177,6 +279,7 @@ const NewBloodyComponent = ({ id }) => {
               type="button"
               className="btn btn-secondary"
               data-bs-dismiss="modal"
+              onClick={closeModal}
             >
               關閉
             </button>

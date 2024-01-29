@@ -27,6 +27,7 @@ const Header = () => {
     { name: "關於我們", href: "/about" },
     // { name: "新增紀錄", href: "/newrecord" },
     { name: "查看紀錄", href: "/bloody-detail" },
+    { name: "圖表", href: "/dashboard" },
   ];
 
   const navList = navigation.map((item) => (

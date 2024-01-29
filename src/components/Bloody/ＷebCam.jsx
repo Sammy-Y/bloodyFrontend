@@ -79,7 +79,7 @@ const WebCam = ({ id }) => {
             ></button>
           </div>
           <div className="modal-body d-flex justify-content-center">
-            {imgSrc === null ? (
+            {/* {imgSrc === null ? (
               <Webcam
                 audio={false}
                 ref={webcamRef}
@@ -93,7 +93,7 @@ const WebCam = ({ id }) => {
                 <img src={imgSrc} alt="img" />
                 <button onClick={() => setImgSrc(null)}>Retake</button>
               </>
-            )}
+            )} */}
           </div>
           <div className="modal-footer">
             <button
