@@ -16,6 +16,7 @@ import Footer from "./components/Layout/Footer";
 import { UserProvider } from "./store/UserProvider";
 import ComfirmComponent from "./components/user/ComfirmComponent";
 import BloodyDetailComponent from "./components/Bloody/BloodyDetailComponent";
+import CalendarComponent from "./components/Bloody/CalendarComponent";
 import DashboardComponent from "./components/Bloody/DashboardComponent";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
               exact
             />
             <Route path="/bloody-detail" element={<BloodyDetailComponent />} />
+            <Route path="/calendar" element={<CalendarComponent />} />
             <Route path="/dashboard" element={<DashboardComponent />} />
           </Routes>
         </main>

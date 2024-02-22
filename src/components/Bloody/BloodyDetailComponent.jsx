@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import BloodyService from "../../services/bloody-service";
 import Spinner from "../UI/Spinner";
 import "./scss/BloodyDetailComponent.css";
-import NewBloodyComponent from "./NewBloodyComponent";
-import WebCam from "./ＷebCam";
 import moment from "moment";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import { Modal } from "bootstrap";
 
 const BloodyDetailComponent = () => {
@@ -96,84 +92,16 @@ const BloodyDetailComponent = () => {
           <div className="justify-content-center">
             <div className="col col-lg-10 d-flex my-3">
               <h3>血壓歷史紀錄</h3>
-              <div className="dropdown mx-4">
-                <a
-                  className="btn btn-primary dropdown-toggle"
-                  href="#"
-                  role="button"
-                  id="dropdownMenuLink"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  操作
-                </a>
-                <ul
-                  className="dropdown-menu"
-                  aria-labelledby="dropdownMenuLink"
-                >
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      data-bs-toggle="modal"
-                      data-bs-target="#newBloodyBackdrop"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        className="bi bi-plus-lg"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
-                        />
-                      </svg>
-                      新增紀錄
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a className="dropdown-item" onClick={exportSheets}>
-                      匯出血壓紀錄表
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              {/* <div>
-                <button
-                  type="button"
-                  className="btn btn-primary mx-4"
-                  data-bs-toggle="modal"
-                  data-bs-target="#newBloodyBackdrop"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-plus-lg"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
-                    />
-                  </svg>
-                  新增紀錄
+              <div className="mx-4">
+                <button className="btn btn-primary" id="dropdownMenuLink">
+                  匯出紀錄表
                 </button>
-              </div> */}
-              {/* open New bloody modal */}
-              {/* <NewBloodyComponent id="newBloodyBackdrop" /> */}
-              <WebCam id="takePicture" />
+              </div>
             </div>
-            <div className="calendar">
+            {/* <div className="calendar">
               <Calendar value={date} onClickDay={handleDayClick} />
               <NewBloodyComponent id="newBloodyBackdrop" date={date} />
-            </div>
+            </div> */}
             <div className="col col-lg-12">
               <table className="table table-hover table-bordered table-responsive blood-detail">
                 <thead>

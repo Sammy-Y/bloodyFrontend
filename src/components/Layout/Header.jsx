@@ -25,8 +25,8 @@ const Header = () => {
   let navigation = [
     { name: "首頁", href: "/" },
     { name: "關於我們", href: "/about" },
-    // { name: "新增紀錄", href: "/newrecord" },
     { name: "查看紀錄", href: "/bloody-detail" },
+    { name: "行事曆", href: "/calendar" },
     { name: "圖表", href: "/dashboard" },
   ];
 
