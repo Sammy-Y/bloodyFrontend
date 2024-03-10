@@ -2,17 +2,37 @@ import React, { useState, useRef, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import { Modal } from "bootstrap";
+import Spinner from "../UI/Spinner";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import removeBtn from "../../static/Img/removeBtn.png";
 
 import BloodyService from "../../services/bloody-service";
 import DatePicker from "react-multi-date-picker";
 import moment from "moment";
+import "./scss/NewBloodyComponent.css";
 
 const NewBloodyComponent = ({ id, date }) => {
   // get current user data from local storage
+  const [morningData, setMorningData] = useState({
+    time: "morning",
+    sys: "",
+    dia: "",
+    pul: "",
+    remark: "",
+    selectedFile: "",
+  });
+  const [afternoonData, setAfternoonData] = useState({
+    time: "afternoon",
+    sys: "",
+    dia: "",
+    pul: "",
+    remark: "",
+  });
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const [tabDefault, setTabDefault] = useState(""); // 記錄當前時間，預設tab選項
   const [tempSys, setTempSys] = useState("");
+  const [getDataDone, setGetDataDone] = useState(true);
   const [tempDia, setTempDia] = useState("");
   const [tempPul, setTempPul] = useState("");
   const [sys, setSys] = useState("");
@@ -46,27 +66,28 @@ const NewBloodyComponent = ({ id, date }) => {
     const addDate = moment(new Date(selectedDate)).format(
       "YYYY/MM/DD/HH:mm:ss"
     );
-    BloodyService.addRecord(
-      sys,
-      dia,
-      pul,
-      currentUser.user.userId,
-      addDate,
-      remark,
-      state
-    )
-      .then(() => {
-        if (state === "add") {
-          window.alert("新增成功！");
-        } else if (state === "edit") {
-          window.alert("編輯成功！");
-        }
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-        setErrMessage(err.response.data);
-      });
+    console.log(morningData.selectedFile);
+    // BloodyService.addRecord(
+    //   sys,
+    //   dia,
+    //   pul,
+    //   currentUser.user.userId,
+    //   addDate,
+    //   remark,
+    //   state
+    // )
+    //   .then(() => {
+    //     if (state === "add") {
+    //       window.alert("新增成功！");
+    //     } else if (state === "edit") {
+    //       window.alert("編輯成功！");
+    //     }
+    //     window.location.reload();
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response.data);
+    //     setErrMessage(err.response.data);
+    //   });
   };
 
   const handleInputChange = (event, ref) => {
@@ -74,15 +95,31 @@ const NewBloodyComponent = ({ id, date }) => {
     console.log(inputValue);
     switch (ref) {
       case "sys":
+        setMorningData({
+          ...morningData,
+          sys: inputValue,
+        });
         setSys(inputValue);
         break;
       case "dia":
+        setMorningData({
+          ...morningData,
+          dia: inputValue,
+        });
         setDia(inputValue);
         break;
       case "pul":
+        setMorningData({
+          ...morningData,
+          pul: inputValue,
+        });
         setPul(inputValue);
         break;
       case "remark":
+        setMorningData({
+          ...morningData,
+          remark: inputValue,
+        });
         setRemark(inputValue);
         break;
     }
@@ -105,6 +142,12 @@ const NewBloodyComponent = ({ id, date }) => {
         const reader = new FileReader();
         reader.onloadend = () => {
           console.log(reader.result);
+          setMorningData({
+            ...morningData,
+            selectedFile: file,
+          });
+          console.log(morningData.selectedFile);
+          setGetDataDone(false);
           const params = {
             img_base64: reader.result,
           };
@@ -121,6 +164,7 @@ const NewBloodyComponent = ({ id, date }) => {
                   keyboard: false,
                 }
               );
+              setGetDataDone(true);
               // 開啟modal
               myModal.show();
             })
@@ -145,15 +189,23 @@ const NewBloodyComponent = ({ id, date }) => {
 
   // 每當date傳進來時，就依照userId及date獲取資料
   useEffect(() => {
+    // 處理預設tab
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    // 如果當前時間是下午，則預設選擇下午選項
+    if (currentHour >= 12) {
+      setTabDefault("afternoon");
+    } else {
+      setTabDefault("morning");
+    }
+
     // 在這裡處理 date 的變化
-    console.log("Selected Date:", date);
     setSelectedDate(date);
     date = moment(new Date(date)).format("YYYY/MM/DD");
     const params = {
       userId: currentUser.user.userId,
       date: date,
     };
-    console.log(params);
     BloodyService.getBP(params).then((res) => {
       if (res.data.bloodPressure.length > 0) {
         // 回傳有血壓紀錄資料
@@ -174,11 +226,20 @@ const NewBloodyComponent = ({ id, date }) => {
     setPul(tempPul);
   };
 
+  // tab 更換
+  const timeChange = (tabSelected) => {
+    setTabDefault(tabSelected);
+  };
+
   // 關閉辨識結果開窗
   const closeRegModal = () => {
     setTempSys("");
     setTempDia("");
     setTempPul("");
+  };
+
+  const removeFile = (item) => {
+    console.log(item);
   };
 
   return (
@@ -212,181 +273,209 @@ const NewBloodyComponent = ({ id, date }) => {
                   {errMessage}
                 </div>
               )}
-              {/* <Tabs
-              defaultActiveKey="profile"
-              id="uncontrolled-tab-example"
-              className="mb-3"
-            >
-              <Tab eventKey="morning" title="上午">
-                <div className="form-group my-2">
-                  <label htmlFor="userId" className="mb-1">
-                    日期(DATE)：
-                  </label>
-                  <br />
-                  <DatePicker
-                    className="rmdp-mobile"
-                    inputClass="form-control"
-                    // style={{ display: "block", width: "100" }}
-                    // render={<InputIcon />}
-                    months={months}
-                    weekDays={weekDays}
-                    value={selectedDate}
-                    disabled="true"
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userId" className="mb-1">
-                    收縮壓(SYS) :
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="SYS"
-                    name="SYS"
-                    value={sys}
-                    placeholder="請輸入收縮壓"
-                    onChange={(event) => handleInputChange(event, "sys")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userPw" className="mb-1">
-                    舒張壓(DIA):
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="DIA"
-                    name="DIA"
-                    value={dia}
-                    placeholder="請輸入舒張壓"
-                    onChange={(event) => handleInputChange(event, "dia")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userPw" className="mb-1">
-                    心跳(PUL):
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="PUL"
-                    name="PUL"
-                    placeholder="請輸入心跳"
-                    value={pul}
-                    onChange={(event) => handleInputChange(event, "pul")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="formFile" className="form-label">
-                    附件(Image):
-                  </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    onChange={handleUploadImageChange}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="remark" className="mb-1">
-                    備註(Remark):
-                  </label>
-                  <textarea
-                    className="form-control"
-                    id="remark"
-                    name="remark"
-                    placeholder="請輸入"
-                    value={remark}
-                    onChange={(event) => handleInputChange(event, "remark")}
-                  />
-                </div>
-              </Tab>
-              <Tab eventKey="afternoon" title="下午">
-                <div className="form-group my-2">
-                  <label htmlFor="userId" className="mb-1">
-                    日期(DATE)：
-                  </label>
-                  <br />
-                  <DatePicker
-                    className="rmdp-mobile"
-                    inputClass="form-control"
-                    // style={{ display: "block", width: "100" }}
-                    // render={<InputIcon />}
-                    months={months}
-                    weekDays={weekDays}
-                    value={selectedDate}
-                    disabled="true"
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userId" className="mb-1">
-                    收縮壓(SYS) :
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="SYS"
-                    name="SYS"
-                    value={sys}
-                    placeholder="請輸入收縮壓"
-                    onChange={(event) => handleInputChange(event, "sys")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userPw" className="mb-1">
-                    舒張壓(DIA):
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="DIA"
-                    name="DIA"
-                    value={dia}
-                    placeholder="請輸入舒張壓"
-                    onChange={(event) => handleInputChange(event, "dia")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="userPw" className="mb-1">
-                    心跳(PUL):
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="PUL"
-                    name="PUL"
-                    placeholder="請輸入心跳"
-                    value={pul}
-                    onChange={(event) => handleInputChange(event, "pul")}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="formFile" className="form-label">
-                    附件(Image):
-                  </label>
-                  <input
-                    className="form-control"
-                    type="file"
-                    id="formFile"
-                    onChange={handleUploadImageChange}
-                  />
-                </div>
-                <div className="form-group my-2">
-                  <label htmlFor="remark" className="mb-1">
-                    備註(Remark):
-                  </label>
-                  <textarea
-                    className="form-control"
-                    id="remark"
-                    name="remark"
-                    placeholder="請輸入"
-                    value={remark}
-                    onChange={(event) => handleInputChange(event, "remark")}
-                  />
-                </div>
-              </Tab>
-            </Tabs> */}
-              <div className="form-group my-2">
+
+              <Tabs
+                activeKey={tabDefault}
+                id="uncontrolled-tab-example"
+                className="mb-3"
+                onSelect={(event) => timeChange(event)}
+              >
+                <Tab eventKey="morning" title="上午">
+                  <div className="form-group my-2">
+                    <label htmlFor="userId" className="mb-1">
+                      日期(DATE)：
+                    </label>
+                    <br />
+                    <DatePicker
+                      className="rmdp-mobile"
+                      inputClass="form-control"
+                      // style={{ display: "block", width: "100" }}
+                      // render={<InputIcon />}
+                      months={months}
+                      weekDays={weekDays}
+                      value={selectedDate}
+                      disabled="true"
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userId" className="mb-1">
+                      收縮壓(SYS) :
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="SYS"
+                      name="SYS"
+                      value={sys}
+                      placeholder="請輸入收縮壓"
+                      onChange={(event) => handleInputChange(event, "sys")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userPw" className="mb-1">
+                      舒張壓(DIA):
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="DIA"
+                      name="DIA"
+                      value={dia}
+                      placeholder="請輸入舒張壓"
+                      onChange={(event) => handleInputChange(event, "dia")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userPw" className="mb-1">
+                      心跳(PUL):
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="PUL"
+                      name="PUL"
+                      placeholder="請輸入心跳"
+                      value={pul}
+                      onChange={(event) => handleInputChange(event, "pul")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="formFile" className="form-label">
+                      附件(Image):
+                    </label>
+                    <div className="row">
+                      <div className="col-10">
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="formFile"
+                          onChange={handleUploadImageChange}
+                        />
+                      </div>
+                      <button
+                        className="col remove-btn"
+                        type="button"
+                        onClick={() => {
+                          removeFile("morning");
+                        }}
+                      >
+                        <img src={removeBtn} alt="removeBtn" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="remark" className="mb-1">
+                      備註(Remark):
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="remark"
+                      name="remark"
+                      placeholder="請輸入"
+                      value={remark}
+                      onChange={(event) => handleInputChange(event, "remark")}
+                    />
+                  </div>
+                </Tab>
+                <Tab eventKey="afternoon" title="下午">
+                  <div className="form-group my-2">
+                    <label htmlFor="userId" className="mb-1">
+                      日期(DATE)：
+                    </label>
+                    <br />
+                    <DatePicker
+                      className="rmdp-mobile"
+                      inputClass="form-control"
+                      // style={{ display: "block", width: "100" }}
+                      // render={<InputIcon />}
+                      months={months}
+                      weekDays={weekDays}
+                      value={selectedDate}
+                      disabled="true"
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userId" className="mb-1">
+                      收縮壓(SYS) :
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="SYS"
+                      name="SYS"
+                      value={afternoonData.sys}
+                      placeholder="請輸入收縮壓"
+                      onChange={(event) => handleInputChange(event, "sys")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userPw" className="mb-1">
+                      舒張壓(DIA):
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="DIA"
+                      name="DIA"
+                      value={afternoonData.dia}
+                      placeholder="請輸入舒張壓"
+                      onChange={(event) => handleInputChange(event, "dia")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="userPw" className="mb-1">
+                      心跳(PUL):
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="PUL"
+                      name="PUL"
+                      placeholder="請輸入心跳"
+                      value={afternoonData.pul}
+                      onChange={(event) => handleInputChange(event, "pul")}
+                    />
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="formFile" className="form-label">
+                      附件(Image):
+                    </label>
+                    <div className="row">
+                      <div className="col-10">
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="formFile"
+                          onChange={handleUploadImageChange}
+                        />
+                      </div>
+                      <button
+                        className="col remove-btn"
+                        type="button"
+                        onClick={() => {
+                          removeFile("afternoon");
+                        }}
+                      >
+                        <img src={removeBtn} alt="removeBtn" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="form-group my-2">
+                    <label htmlFor="remark" className="mb-1">
+                      備註(Remark):
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="remark"
+                      name="remark"
+                      placeholder="請輸入"
+                      value={afternoonData.remark}
+                      onChange={(event) => handleInputChange(event, "remark")}
+                    />
+                  </div>
+                </Tab>
+              </Tabs>
+              {/* <div className="form-group my-2">
                 <label htmlFor="userId" className="mb-1">
                   日期(DATE)：
                 </label>
@@ -467,7 +556,7 @@ const NewBloodyComponent = ({ id, date }) => {
                   value={remark}
                   onChange={(event) => handleInputChange(event, "remark")}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="modal-footer">
               <button
@@ -490,6 +579,7 @@ const NewBloodyComponent = ({ id, date }) => {
           </div>
         </div>
       </div>
+      {!getDataDone && <Spinner />}
       <div
         id="confirm-bloody"
         className="modal fade"

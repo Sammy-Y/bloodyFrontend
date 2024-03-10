@@ -1,0 +1,9 @@
+.remove-btn {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: #fff;
+}
+.remove-btn img {
+  height: 25px;
+}/*# sourceMappingURL=NewBloodyComponent.css.map */
