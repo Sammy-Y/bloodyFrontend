@@ -15,19 +15,23 @@ import "./scss/NewBloodyComponent.css";
 const NewBloodyComponent = ({ id, date }) => {
   // get current user data from local storage
   const [morningData, setMorningData] = useState({
-    time: "morning",
+    // time: "morning",
+    measureTime: "0",
     sys: "",
     dia: "",
     pul: "",
     remark: "",
-    selectedFile: "",
+    state: "add",
+    // selectedFile: "",
   });
   const [afternoonData, setAfternoonData] = useState({
-    time: "afternoon",
+    // time: "afternoon",
+    measureTime: "1",
     sys: "",
     dia: "",
     pul: "",
     remark: "",
+    state: "add",
   });
   const currentUser = JSON.parse(localStorage.getItem("user"));
   const [tabDefault, setTabDefault] = useState(""); // 記錄當前時間，預設tab選項
@@ -40,6 +44,7 @@ const NewBloodyComponent = ({ id, date }) => {
   const [pul, setPul] = useState("");
   const [remark, setRemark] = useState("");
   const [state, setState] = useState("add");
+  const [uploadState, setUploadState] = useState("");
   const [errMessage, setErrMessage] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const months = [
@@ -66,67 +71,92 @@ const NewBloodyComponent = ({ id, date }) => {
     const addDate = moment(new Date(selectedDate)).format(
       "YYYY/MM/DD/HH:mm:ss"
     );
-    console.log(morningData.selectedFile);
-    // BloodyService.addRecord(
-    //   sys,
-    //   dia,
-    //   pul,
-    //   currentUser.user.userId,
-    //   addDate,
-    //   remark,
-    //   state
-    // )
-    //   .then(() => {
-    //     if (state === "add") {
-    //       window.alert("新增成功！");
-    //     } else if (state === "edit") {
-    //       window.alert("編輯成功！");
-    //     }
-    //     window.location.reload();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response.data);
-    //     setErrMessage(err.response.data);
-    //   });
+    const bloodyList = [
+      { ...morningData, addDate: addDate, userId: currentUser.user.userId },
+      { ...afternoonData, addDate: addDate, userId: currentUser.user.userId },
+    ];
+    console.log(morningData);
+    console.log(afternoonData);
+    console.log(bloodyList);
+    BloodyService.addRecord(
+      sys,
+      dia,
+      pul,
+      currentUser.user.userId,
+      addDate,
+      remark,
+      state,
+      morningData,
+      afternoonData,
+      bloodyList
+    )
+      .then((response) => {
+        console.log(response)
+        if(response.data.success){
+          if (state === "add") {
+            window.alert("新增成功！");
+          } else if (state === "edit") {
+            window.alert("編輯成功！");
+          }
+          window.location.reload();
+        }else{
+          setErrMessage(response.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+        setErrMessage(err.response.data);
+      });
   };
 
-  const handleInputChange = (event, ref) => {
+  const handleInputChange = (event, ref, time) => {
     const inputValue = event.target.value;
-    console.log(inputValue);
-    switch (ref) {
-      case "sys":
-        setMorningData({
-          ...morningData,
-          sys: inputValue,
-        });
-        setSys(inputValue);
+    // 先switch time，在switch 欄位
+    switch (time) {
+      case "morning":
+        switch (ref) {
+          case "sys":
+            setMorningData({
+              ...morningData,
+              sys: inputValue,
+            });
+            setSys(inputValue);
+            break;
+          case "dia":
+            setMorningData({
+              ...morningData,
+              dia: inputValue,
+            });
+            setDia(inputValue);
+            break;
+          case "pul":
+            setMorningData({
+              ...morningData,
+              pul: inputValue,
+            });
+            setPul(inputValue);
+            break;
+          case "remark":
+            setMorningData({
+              ...morningData,
+              remark: inputValue,
+            });
+            setRemark(inputValue);
+            break;
+        }
         break;
-      case "dia":
-        setMorningData({
-          ...morningData,
-          dia: inputValue,
+      case "afternoon":
+        setAfternoonData({
+          ...afternoonData,
+          [ref]: inputValue,
         });
-        setDia(inputValue);
-        break;
-      case "pul":
-        setMorningData({
-          ...morningData,
-          pul: inputValue,
-        });
-        setPul(inputValue);
-        break;
-      case "remark":
-        setMorningData({
-          ...morningData,
-          remark: inputValue,
-        });
-        setRemark(inputValue);
         break;
     }
   };
 
   // 上傳附件處理
-  const handleUploadImageChange = (event) => {
+  const handleUploadImageChange = (event, time) => {
+    console.log(time);
     if (event.target.files[0]) {
       // 如果有傳入圖片才處理辨識
       const file = event.target.files[0];
@@ -146,7 +176,6 @@ const NewBloodyComponent = ({ id, date }) => {
             ...morningData,
             selectedFile: file,
           });
-          console.log(morningData.selectedFile);
           setGetDataDone(false);
           const params = {
             img_base64: reader.result,
@@ -157,6 +186,7 @@ const NewBloodyComponent = ({ id, date }) => {
               setTempSys(response.data.data.SYS);
               setTempDia(response.data.data.DIA);
               setTempPul(response.data.data.PLUSE);
+              setUploadState(time);
               // 獲取 modal元素
               const myModal = new Modal(
                 document.getElementById("confirm-bloody"),
@@ -185,6 +215,26 @@ const NewBloodyComponent = ({ id, date }) => {
     setRemark("");
     setState("add");
     setErrMessage("");
+    setMorningData({
+      // time: "morning",
+      measureTime: "0",
+      sys: "",
+      dia: "",
+      pul: "",
+      remark: "",
+      state: "add",
+      // selectedFile: "",
+    });
+    setAfternoonData({
+      // time: "morning",
+      measureTime: "1",
+      sys: "",
+      dia: "",
+      pul: "",
+      remark: "",
+      state: "add",
+      // selectedFile: "",
+    });
   };
 
   // 每當date傳進來時，就依照userId及date獲取資料
@@ -210,6 +260,30 @@ const NewBloodyComponent = ({ id, date }) => {
       if (res.data.bloodPressure.length > 0) {
         // 回傳有血壓紀錄資料
         console.log(res.data.bloodPressure);
+        res.data.bloodPressure.forEach((element) => {
+          switch (element.measureTime) {
+            case "0": // 上午
+              setMorningData({
+                measureTime: element.measureTime,
+                sys: element.systolicPressure,
+                dia: element.diastolicPressure,
+                pul: element.heartRate,
+                remark: element.remark,
+                state: "edit",
+              });
+              break;
+            case "1": // 下午
+              setAfternoonData({
+                measureTime: element.measureTime,
+                sys: element.systolicPressure,
+                dia: element.diastolicPressure,
+                pul: element.heartRate,
+                remark: element.remark,
+                state: "edit",
+              });
+              break;
+          }
+        });
         setSys(res.data.bloodPressure[0].systolicPressure);
         setDia(res.data.bloodPressure[0].diastolicPressure);
         setPul(res.data.bloodPressure[0].heartRate);
@@ -221,6 +295,24 @@ const NewBloodyComponent = ({ id, date }) => {
 
   // 圖片辨識完後，modal開窗確定，並將辨識結果的值給form
   const confirmBloody = () => {
+    switch (uploadState) {
+      case "morning":
+        setMorningData({
+          ...morningData,
+          sys: tempSys,
+          dia: tempDia,
+          pul: tempPul,
+        });
+        break;
+      case "afternoon":
+        setAfternoonData({
+          ...afternoonData,
+          sys: tempSys,
+          dia: tempDia,
+          pul: tempPul,
+        });
+        break;
+    }
     setSys(tempSys);
     setDia(tempDia);
     setPul(tempPul);
@@ -306,9 +398,11 @@ const NewBloodyComponent = ({ id, date }) => {
                       className="form-control"
                       id="SYS"
                       name="SYS"
-                      value={sys}
+                      value={morningData.sys}
                       placeholder="請輸入收縮壓"
-                      onChange={(event) => handleInputChange(event, "sys")}
+                      onChange={(event) =>
+                        handleInputChange(event, "sys", "morning")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -320,9 +414,11 @@ const NewBloodyComponent = ({ id, date }) => {
                       className="form-control"
                       id="DIA"
                       name="DIA"
-                      value={dia}
+                      value={morningData.dia}
                       placeholder="請輸入舒張壓"
-                      onChange={(event) => handleInputChange(event, "dia")}
+                      onChange={(event) =>
+                        handleInputChange(event, "dia", "morning")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -335,8 +431,10 @@ const NewBloodyComponent = ({ id, date }) => {
                       id="PUL"
                       name="PUL"
                       placeholder="請輸入心跳"
-                      value={pul}
-                      onChange={(event) => handleInputChange(event, "pul")}
+                      value={morningData.pul}
+                      onChange={(event) =>
+                        handleInputChange(event, "pul", "morning")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -349,7 +447,9 @@ const NewBloodyComponent = ({ id, date }) => {
                           className="form-control"
                           type="file"
                           id="formFile"
-                          onChange={handleUploadImageChange}
+                          onChange={(event) =>
+                            handleUploadImageChange(event, "morning")
+                          }
                         />
                       </div>
                       <button
@@ -372,8 +472,10 @@ const NewBloodyComponent = ({ id, date }) => {
                       id="remark"
                       name="remark"
                       placeholder="請輸入"
-                      value={remark}
-                      onChange={(event) => handleInputChange(event, "remark")}
+                      value={morningData.remark}
+                      onChange={(event) =>
+                        handleInputChange(event, "remark", "morning")
+                      }
                     />
                   </div>
                 </Tab>
@@ -405,7 +507,9 @@ const NewBloodyComponent = ({ id, date }) => {
                       name="SYS"
                       value={afternoonData.sys}
                       placeholder="請輸入收縮壓"
-                      onChange={(event) => handleInputChange(event, "sys")}
+                      onChange={(event) =>
+                        handleInputChange(event, "sys", "afternoon")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -419,7 +523,9 @@ const NewBloodyComponent = ({ id, date }) => {
                       name="DIA"
                       value={afternoonData.dia}
                       placeholder="請輸入舒張壓"
-                      onChange={(event) => handleInputChange(event, "dia")}
+                      onChange={(event) =>
+                        handleInputChange(event, "dia", "afternoon")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -433,7 +539,9 @@ const NewBloodyComponent = ({ id, date }) => {
                       name="PUL"
                       placeholder="請輸入心跳"
                       value={afternoonData.pul}
-                      onChange={(event) => handleInputChange(event, "pul")}
+                      onChange={(event) =>
+                        handleInputChange(event, "pul", "afternoon")
+                      }
                     />
                   </div>
                   <div className="form-group my-2">
@@ -446,7 +554,9 @@ const NewBloodyComponent = ({ id, date }) => {
                           className="form-control"
                           type="file"
                           id="formFile"
-                          onChange={handleUploadImageChange}
+                          onChange={(event) =>
+                            handleUploadImageChange(event, "afternoon")
+                          }
                         />
                       </div>
                       <button
@@ -470,7 +580,9 @@ const NewBloodyComponent = ({ id, date }) => {
                       name="remark"
                       placeholder="請輸入"
                       value={afternoonData.remark}
-                      onChange={(event) => handleInputChange(event, "remark")}
+                      onChange={(event) =>
+                        handleInputChange(event, "remark", "afternoon")
+                      }
                     />
                   </div>
                 </Tab>

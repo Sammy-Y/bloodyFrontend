@@ -26,7 +26,10 @@ const DashboardComponent = () => {
 
   useEffect(() => {
     if (userId) {
-      BloodyService.getBpDetail(userId)
+      const params = {
+        choosePeriod: 7
+      }
+      BloodyService.getDashBoardBp(userId, params)
         .then((result) => {
           console.log(result);
           const bpList = result.data.data.map((item) => {

@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_URL = "//192.168.1.106:8000/api/bp";
-const PYTHON_API_URL = "http://192.168.1.106:5000/api";
+const API_URL = "//192.168.1.105:8000/api/bp";
+const PYTHON_API_URL = "http://192.168.1.105:5000/api";
 // const PYTHON_API_URL = "//127.0.0.1:5000/api";
 // const API_URL = "http://192.168.1.106:8000/api/bp";
 
@@ -21,9 +21,15 @@ class BloodyService {
       headers,
     });
   }
+  
+  getDashBoardBp(userId, params){
+    return axios.get(API_URL + "/getDashBoardBp/" + userId, {
+      headers,
+      params,
+    });
+  }
 
   getBP(params) {
-    console.log(params);
     return axios.get(API_URL + "/getBP/", {
       headers,
       params,
@@ -31,7 +37,18 @@ class BloodyService {
   }
 
   // add new bloody record
-  addRecord(sys, dia, pul, userId, addDate, remark, state) {
+  addRecord(
+    sys,
+    dia,
+    pul,
+    userId,
+    addDate,
+    remark,
+    state,
+    morningData,
+    afternoonData,
+    bloodyList
+  ) {
     return axios.post(
       API_URL + "/newbp",
       {
@@ -42,6 +59,9 @@ class BloodyService {
         addDate: addDate,
         remark: remark,
         state: state,
+        morningData: morningData,
+        afternoonData: afternoonData,
+        bloodyList: bloodyList,
       },
       {
         headers,

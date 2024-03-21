@@ -9,7 +9,6 @@ const CalendarComponent = () => {
   const [date, setDate] = useState(new Date()); // 記錄選擇的日期
   const handleDayClick = (selectedDate) => {
     setDate(selectedDate);
-    console.log(selectedDate);
     // 獲取 modal元素
     var myModal = new Modal(document.getElementById("newBloodyBackdrop"), {
       keyboard: false,
