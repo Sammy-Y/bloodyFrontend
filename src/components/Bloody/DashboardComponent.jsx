@@ -31,17 +31,16 @@ const DashboardComponent = () => {
       }
       BloodyService.getDashBoardBp(userId, params)
         .then((result) => {
-          console.log(result);
+          console.log(result.data)
           const bpList = result.data.data.map((item) => {
             return {
               ...item,
-              userAddDate: moment(item.userAddDate, "YYYY/MM/DD").format("DD"),
-              sys: item.systolicPressure,
-              dia: item.diastolicPressure,
-              pul: item.heartRate,
+              userAddDate: moment(item._id, "YYYY/MM/DD").format("DD"),
+              sys: item.sys,
+              dia: item.dia,
+              pul: item.pul,
             };
           });
-          console.log(bpList);
           setBloodyDetailList(bpList);
           // setGetDataDone(true);
         })

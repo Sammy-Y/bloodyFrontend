@@ -1,6 +1,6 @@
 import axios from "axios";
-const API_URL = "//192.168.1.105:8000/api/bp";
-const PYTHON_API_URL = "http://192.168.1.105:5000/api";
+const API_URL = "//192.168.1.106:8000/api/bp";
+const PYTHON_API_URL = "http://192.168.1.106:5000/api";
 // const PYTHON_API_URL = "//127.0.0.1:5000/api";
 // const API_URL = "http://192.168.1.106:8000/api/bp";
 
@@ -18,8 +18,15 @@ class BloodyService {
   getBpDetail(userId) {
     console.log(userId);
     return axios.get(API_URL + "/getAllbp/" + userId, {
-      headers,
+      headers
     });
+  }
+
+  getBPExportDetail(params) {
+    return axios.get(API_URL + "/getBPExportDetail" , {
+      headers,
+      params
+    })
   }
   
   getDashBoardBp(userId, params){

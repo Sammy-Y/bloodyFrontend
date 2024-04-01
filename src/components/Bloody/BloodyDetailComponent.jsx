@@ -4,6 +4,8 @@ import Spinner from "../UI/Spinner";
 import "./scss/BloodyDetailComponent.css";
 import moment from "moment";
 import { Modal } from "bootstrap";
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
 
 const BloodyDetailComponent = () => {
   const [bloodyDetailList, setBloodyDetailList] = useState([]);
@@ -16,11 +18,7 @@ const BloodyDetailComponent = () => {
     { title: "收縮壓", width: "27%" },
     { title: "舒張壓", width: "27%" },
     { title: "心跳", width: "20%" },
-    // { title: "備註", width: "20%" },
   ];
-  // const onChange = (newDate) => {
-  //   setDate(newDate);
-  // };
 
   // get date w/o time
   const getDay = (date) => {
@@ -36,14 +34,58 @@ const BloodyDetailComponent = () => {
 
   // 匯出血壓紀錄表
   const exportSheets = () => {
-    console.log(userId);
     const params = {
-      userId: userId,
-    };
+      userId: userId
+    }
+    // 獲取血壓匯出資料
+    BloodyService.getBPExportDetail(params)
+    .then((result) => {
+      const bpDetailData = result.data.data;
+      const userName = result.data.data[0].user_name;
 
-    BloodyService.postRecordSheets(params).then((data) => {
-      console.log(data);
+      // get word templater
+      const templatePath = '/template/bloody_template.docx';
+      fetch(templatePath)
+      .then((response) => response.arrayBuffer())
+      .then((arrayBuffer) => {
+        console.log(arrayBuffer);
+        const zip = new PizZip(arrayBuffer);
+        const doc = new Docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true,
+        });
+
+        // fill data
+        doc.render({
+          user_name : userName,
+          bloodyDetail: bpDetailData
+        });
+
+        const blob = doc.getZip().generate({
+          type: 'blob',
+          mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          compression: 'DEFLATE'
+        });
+        // Create a temporary URL for the Blob
+        const url = window.URL.createObjectURL(blob);
+        // Create a link element and set its attributes
+        const a = document.createElement('a');
+        a.href = url;
+        // eslint-disable-next-line max-len
+        a.download = 'test.docx';
+        // Append the link element to the document body and trigger a click event to start the download
+        document.body.appendChild(a);
+        a.click();
+        // Clean up by revoking the temporary URL
+        window.URL.revokeObjectURL(url);
+      })
+    })
+    .catch((err) => {
+
     });
+
+
+    
   };
 
   const handleDayClick = (selectedDate) => {
@@ -93,7 +135,7 @@ const BloodyDetailComponent = () => {
             <div className="col col-lg-10 d-flex my-3">
               <h3>血壓歷史紀錄</h3>
               <div className="mx-4">
-                <button className="btn btn-primary" id="dropdownMenuLink">
+                <button className="btn btn-primary" id="dropdownMenuLink" onClick={exportSheets}>
                   匯出紀錄表
                 </button>
               </div>
