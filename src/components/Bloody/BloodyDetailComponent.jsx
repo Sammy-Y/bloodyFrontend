@@ -72,7 +72,7 @@ const BloodyDetailComponent = () => {
         const a = document.createElement('a');
         a.href = url;
         // eslint-disable-next-line max-len
-        a.download = 'test.docx';
+        a.download = '血壓紀錄表.docx';
         // Append the link element to the document body and trigger a click event to start the download
         document.body.appendChild(a);
         a.click();

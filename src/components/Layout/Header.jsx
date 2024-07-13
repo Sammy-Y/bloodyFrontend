@@ -25,12 +25,18 @@ const Header = () => {
   let navigation = [
     { name: "首頁", href: "/" },
     { name: "關於我們", href: "/about" },
+  ];
+
+  const loginNavi = [
+    { name: "首頁", href: "/" },
+    // { name: "關於我們", href: "/about" },
     { name: "查看紀錄", href: "/bloody-detail" },
     { name: "行事曆", href: "/calendar" },
     { name: "圖表", href: "/dashboard" },
-  ];
+  ]
 
-  const navList = navigation.map((item) => (
+  // 依照是否有登入來顯示不同的navBar
+  const navList = (currentUser ? loginNavi : navigation).map((item) => (
     <NavButton key={item.name} item={item} />
   ));
 

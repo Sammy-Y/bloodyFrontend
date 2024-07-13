@@ -98,6 +98,7 @@ const NewBloodyComponent = ({ id, date }) => {
           } else if (state === "edit") {
             window.alert("編輯成功！");
           }
+          closeModal();
           window.location.reload();
         }else{
           setErrMessage(response.data.message);

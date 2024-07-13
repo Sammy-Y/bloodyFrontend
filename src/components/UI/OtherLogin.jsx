@@ -48,7 +48,7 @@ const OtherLogin = () => {
       <div className="text-center my-3">
         <p style={{ fontSize: "0.75rem", color: "gray" }}>或</p>
       </div>
-      <div className="d-flex">
+      <div className="d-flex justify-content-center">
         {/* 20231018，add google login button and styling */}
         <GoogleLogin
           render={(renderProps) => (
@@ -80,7 +80,7 @@ const OtherLogin = () => {
           </div>
           <div className="mx-1">Google</div>
         </button> */}
-        <button
+        {/* <button
           className="d-flex btn btn-outline-secondary mx-3 justify-content-center"
           style={{ width: "12rem" }}
         >
@@ -88,7 +88,7 @@ const OtherLogin = () => {
             <img src={lineImg} style={{ width: "24px" }} alt="google" />
           </div>
           <div className="mx-1">Line</div>
-        </button>
+        </button> */}
       </div>
     </div>
   );

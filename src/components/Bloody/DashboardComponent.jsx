@@ -73,7 +73,11 @@ const DashboardComponent = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="sys" stroke="#82ca9d" />
+          <Line 
+            type="monotone" 
+            dataKey="sys" 
+            stroke="#82ca9d" 
+          />
           <Line
             type="monotone"
             dataKey="dia"

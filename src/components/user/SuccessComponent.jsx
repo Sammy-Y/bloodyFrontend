@@ -34,7 +34,7 @@ const SuccessComponent = () => {
           </p>
         </div>
         <div className="form-group my-4">
-          <h5 className="text-center">請在15分鐘內進行驗證。</h5>
+          <h5 className="text-center">請前往信箱收取信件並進行確認。</h5>
         </div>
 
         <div className="text-center mt-4">

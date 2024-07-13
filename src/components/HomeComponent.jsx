@@ -11,13 +11,13 @@ const HomeComponent = () => {
   const { currentUser } = useContext(UserContext);
 
   const toLoginHandler = () => {
-    currentUser ? navigate("/bloody-detail") : navigate("/login");
+    currentUser ? navigate("/calendar") : navigate("/login");
   };
 
   return (
     <div className="row">
       <div className="col-sm my-5">
-        <h1>歡迎使用Blood Help</h1>
+        <h1>歡迎使用Blood Monitor</h1>
         <p>
           這是一款拍照就能記錄血壓的APP。
           只要對著血壓計拍照，就能夠輕鬆記錄血壓！
