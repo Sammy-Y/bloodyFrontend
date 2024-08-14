@@ -33,10 +33,10 @@ const ProfileComponent = () => {
   const lineHandler = async (e) => {
     if (lineChecked) {
     } else {
-      window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=http://192.168.1.105:8000/user/api/linenotify&state=${userId}`;
+      window.location.href = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&state=f094a459&client_id=PdLvERXPclVj8N9uUy2Tlo&redirect_uri=${ip_address}&state=${userId}`;
     }
 
-    // setLineChecked(!lineChecked);
+    setLineChecked(!lineChecked);
   };
 
   const nameChangeHandler = (e) => {
@@ -124,8 +124,7 @@ const ProfileComponent = () => {
               type="checkbox"
               id="mySwitch"
               name="darkmode"
-              data-bs-toggle="modal"
-              data-bs-target="#confirmBackdrop"
+              
               checked={lineChecked}
             />
           </div>

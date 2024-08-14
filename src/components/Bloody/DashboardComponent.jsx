@@ -16,6 +16,8 @@ import moment from "moment";
 const DashboardComponent = () => {
   const [userId, setUserId] = useState("");
   const [bloodyDetailList, setBloodyDetailList] = useState([]);
+  const [avgSys, setAvgSys] = useState(0);
+  const [avgDia, setAvgDia] = useState(0);
 
   useEffect(() => {
     if (localStorage.getItem("user")) {
@@ -31,8 +33,10 @@ const DashboardComponent = () => {
       }
       BloodyService.getDashBoardBp(userId, params)
         .then((result) => {
-          console.log(result.data)
-          const bpList = result.data.data.map((item) => {
+          console.log(result.data.data)
+          setAvgSys(result.data.data.avgSys);
+          setAvgDia(result.data.data.avgDia);
+          const bpList = result.data.data.result.map((item) => {
             return {
               ...item,
               userAddDate: moment(item._id, "YYYY/MM/DD").format("DD"),
@@ -56,7 +60,12 @@ const DashboardComponent = () => {
       <div className="col col-lg-10 d-flex my-3">
         <h3>圖表</h3>
       </div>
-      <ResponsiveContainer width="100%" height="100%">
+      <div className="col col-lg-10 d-flex m-1">
+        過去七天平均血壓為 <br/>
+        收縮壓(SYS)：{avgSys} <br/>
+        舒張壓(DIA)：{avgDia}
+      </div>
+      <ResponsiveContainer width="100%" height="75%">
         <LineChart
           width={500}
           height={300}
